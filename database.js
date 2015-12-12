@@ -3,8 +3,8 @@ var pool = mysql.createPool({
       connectionLimit : 100, //important
       host     : 'localhost',
       user     : 'root',
-      password : 'thBne%u&T052',
-      database : 'treasure',
+      password : 'root',
+      database : 'test',
       debug    :  false
   });
 module.exports = {
@@ -20,10 +20,7 @@ module.exports = {
             connection.release();
             fn(err);
             return;
-          }   
-
-          console.log('connected as id ' + connection.threadId);
-          
+          }
           connection.query(query, params, function(err, results) {
               connection.release();
               if(err) {

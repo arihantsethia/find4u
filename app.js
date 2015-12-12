@@ -14,17 +14,35 @@ var express = require('express')
   , database = require('./database')
   ;
 
-var query1 = 'DROP TABLE users';
-database.executeQuery(query1, [], function(err, result) {
+var drop_unique_code = 'DROP TABLE IF EXISTS unique_codes';
+database.executeQuery(drop_unique_code, [], function(err, result) {
     if (err) {
       console.log(err);
+      process.exit(1);
     }
 });
 
-var query = 'CREATE TABLE users (id VARCHAR(20) PRIMARY KEY, level INT(6) DEFAULT 0, lives INT(6) DEFAULT 0, hint INT(6) DEFAULT 0, blocked INT(6) DEFAULT 0, time INT(20) DEFAULT 0)'
-database.executeQuery(query, [], function(err, result) {
+var drop_users = 'DROP TABLE IF EXISTS users';
+database.executeQuery(drop_users, [], function(err, result) {
     if (err) {
       console.log(err);
+      process.exit(1);
+    }
+});
+
+var create_users = 'CREATE TABLE users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, contact_number INT(10) NOT NULL, email VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL)';
+var create_unique_code = 'CREATE TABLE unique_codes (u_id INT(8) PRIMARY KEY, user_id INT NOT NULL, CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(id))';
+database.executeQuery(create_users, [], function(err, result) {
+    if (err) {
+      console.log(err);
+      process.exit(1);
+    }
+});
+
+database.executeQuery(create_unique_code, [], function(err, result) {
+    if (err) {
+      console.log(err);
+      process.exit(1);
     }
 });
 
@@ -105,13 +123,28 @@ app.post('/login', function(req, res){
     res.redirect('/login');  
   }
 });
- 
+
+app.get('/found', function(req, res){
+    getNewUniqueId();
+    unique_id = req.query["digits"];
+    contact_number = req.query["From"];
+    var query = 'Select * from unique_codes where u_id = ' + unique_id; 
+    database.executeQuery(query, [], function(err, result) {
+        if (err) {
+            res.status(302);
+        }else {
+            console.log(result);
+        }
+        res.send();
+    });
+});
 
 app.get('/logout', function(req, res){
   req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   });
 });
+
 
 app.listen(3000);
 
@@ -123,4 +156,19 @@ app.listen(3000);
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
+}
+
+function getNewUniqueId(){
+    //while(1){
+        console.log("Trying to get new id");
+        var unique_id = Math.floor(Math.random() * 900000000) + 100000000;
+        var query = 'Select count(*) from unique_codes where u_id = ' + unique_id; 
+        database.executeQuery(query, [], function(err, result) {
+            if (err) {
+                console.log(err);
+            }else {
+                console.log(result);
+            }
+        });
+    //}
 }
