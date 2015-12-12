@@ -77,20 +77,12 @@ app.use(function(req, res, next){
 app.get('/', function(req, res){
   console.log(req.session.user);
   if (req.session.user) {
-    database.getUser(req.session.user.id, function(err, result1) {
+    database.getUser(req.session.user.email, function(err, result1) {
       if (err) {
         console.log(err);
         res.render('error');
       } else if (result1.length == 0) {
-        database.insertUser(req.session.user.id, function(err, result2) {
-          if (err) {
-            res.render('error');
-          } else {
-            console.log('Result 2');
-            console.log(result2);
-            res.render('index2', { user: req.session.user, lives: 0});
-          }
-        });
+        
       } else {
         console.log('Result 1');
         console.log(result1);
@@ -98,12 +90,17 @@ app.get('/', function(req, res){
       }
     });
   } else {
+
     res.render('index2', { user: req.user, lives: req.lives});
   }
 });
 
 app.get('/login', function(req, res){
   res.render('login');
+});
+
+app.get('/register', function(req, res){
+  res.render('register');
 });
 
 app.get('/found', function(req, res){
@@ -128,7 +125,7 @@ app.get('/logout', function(req, res){
 });
 
 app.post('/submit', function(req, res){
-  var email = req.body.user;
+  var email = req.body.email;
   var password = req.body.pass;
   database.getUser(email, function(err, result) {
     if (err) {
@@ -137,12 +134,37 @@ app.post('/submit', function(req, res){
     } else {
       console.log('dsadsa');
       var user = result[0];
-      console.log(user);
-      req.session.user = user;
+      console.log(result);
+      req.session.user = [];
+      req.session.user.email = email;
+      res.redirect('/');
     }
   });
 });
 
+app.post('/register', function(req, res){
+  var user = req.body.user;
+  var email = req.body.email;
+  var password = req.body.pass;
+  var number = parseInt(req.body.number);
+  console.log(user);
+  console.log(email);
+  console.log(password);
+  console.log(number);
+  console.log(typeof(number));
+  database.insertUser(user, email, number, password, function(err, result) {
+    if (err) {
+      console.log('error');
+      console.log(err);
+    } else {
+      console.log('dsadsa');
+      console.log(result);
+      req.session.user = {};
+      req.session.user.email = email;
+      res.redirect('/');
+    }
+  });
+});
 
 app.listen(3000);
 

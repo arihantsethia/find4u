@@ -43,7 +43,7 @@ module.exports = {
     module.exports.executeQuery(query, [email], function(err, result) {
       if (err){
         fn(err);
-      } else if (result == []) {
+      } else if (result.length == 0) {
         var error = new Error('User not found');
         fn(error);
       } else {
@@ -52,9 +52,9 @@ module.exports = {
     });
   },
 
-  insertUser : function(id, fn) {
-    var query = 'INSERT into users(id) values(?)';
-    module.exports.executeQuery(query, [id], function(err, result) {
+  insertUser : function(name, email, number, pass, fn) {
+    var query = 'INSERT into users(name, email, contact_number, password) values(?,?,?,?)';
+    module.exports.executeQuery(query, [name, email, number, pass], function(err, result) {
       if (err){
         fn(err);
       } else {

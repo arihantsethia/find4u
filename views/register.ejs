@@ -35,6 +35,9 @@
         .red {
             color: red;
         }
+        header {
+            background-image: url(../img/header2.jpg);
+        }
     </style>
 </head>
 
@@ -57,16 +60,6 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                <% if (!user) { %>
-                    <li>
-                        <a class="page-scroll" href="/login">Login</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="/register">Register</a>
-                    </li>
-                <% } else { %>
-                     <a class="navbar-brand page-scroll" href="#page-top">Hello, <%= user.email %></a>
-                <% } %>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -74,25 +67,19 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <% if (!user) { %>
-        <header>
-            <div class="header-content">
-                <div class="header-content-inner">
-                    <h1>Tag your items for loss prevention</h1>
-                    <hr>
-                </div>
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner" style="background: rgba(255, 255, 255, .5);">
+             <form enctype='application/json' action="/register" method="post" style="color: black">
+                Username: <input type="text" name="user"><br><br>
+                Email: <input type="text" name="email"><br><br>
+                Contact Number: <input type="text" name="number"><br><br>
+                Password: <input type="password" name="pass"><br><br>
+                <input type="submit" value="Submit">
+            </form>
             </div>
-        </header>
-    <% } else { %>
-        <header>
-            <div class="header-content">
-                <div class="header-content-inner">
-                    <!--<h1>Your hash: <%= user.hash %></h1>-->
-                    <hr>
-                </div>
-            </div>
-        </header>
-    <% } %>
+        </div>
+    </header>
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
