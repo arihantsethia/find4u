@@ -52,9 +52,9 @@ module.exports = {
     });
   },
 
-  insertUser : function(name, email, number, pass, fn) {
-    var query = 'INSERT into users(name, email, contact_number, password) values(?,?,?,?)';
-    module.exports.executeQuery(query, [name, email, number, pass], function(err, result) {
+  insertUser : function(name, email, number, pass, unique_id, fn) {
+    var query = 'INSERT into users(name, email, contact_number, password, unique_code) values(?,?,?,?,?)';
+    module.exports.executeQuery(query, [name, email, number, pass, unique_id], function(err, result) {
       if (err){
         fn(err);
       } else {
