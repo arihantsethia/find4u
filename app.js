@@ -30,8 +30,8 @@ database.executeQuery(drop_users, [], function(err, result) {
     }
 });
 
-var create_users = 'CREATE TABLE users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, contact_number INT(10) NOT NULL, email VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL)';
-var create_unique_code = 'CREATE TABLE unique_codes (u_id INT(8) PRIMARY KEY, user_id INT NOT NULL, CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(id))';
+var create_users = 'CREATE TABLE users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, contact_number INT(10) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL)';
+var create_unique_code = 'CREATE TABLE unique_codes (u_id INT(8) PRIMARY KEY, user_id INT NOT NULL)';
 database.executeQuery(create_users, [], function(err, result) {
     if (err) {
       console.log(err);
@@ -106,24 +106,6 @@ app.get('/login', function(req, res){
   res.render('login');
 });
 
-app.post('/login', function(req, res){
-  if (auth_dict[req.body.user] == req.body.pass) {
-    req.session.regenerate(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-      // Store the user's primary key                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-      // in the session store to be retrieved,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-      // or in this case the entire user object                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-      req.session.user = {};
-      req.session.user.id = req.body.user;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-      res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-    });   
-  } else {
-    req.session.error = 'Authentication failed, please check your '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-      + ' username and password.'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-      + ' (use "tj" and "foobar")';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-    res.redirect('/login');  
-  }
-});
-
 app.get('/found', function(req, res){
     getNewUniqueId();
     unique_id = req.query["digits"];
@@ -142,6 +124,22 @@ app.get('/found', function(req, res){
 app.get('/logout', function(req, res){
   req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  });
+});
+
+app.post('/submit', function(req, res){
+  var email = req.body.user;
+  var password = req.body.pass;
+  database.getUser(email, function(err, result) {
+    if (err) {
+      console.log('error');
+      console.log(err);
+    } else {
+      console.log('dsadsa');
+      var user = result[0];
+      console.log(user);
+      req.session.user = user;
+    }
   });
 });
 

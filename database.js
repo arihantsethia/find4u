@@ -38,9 +38,9 @@ module.exports = {
     });
   },
 
-  getUser : function(id, fn) {
-    var query = 'SELECT * from users where id = ?';
-    module.exports.executeQuery(query, [id], function(err, result) {
+  getUser : function(email, fn) {
+    var query = 'SELECT * from users where email = ?';
+    module.exports.executeQuery(query, [email], function(err, result) {
       if (err){
         fn(err);
       } else if (result == []) {
