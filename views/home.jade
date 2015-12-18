@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Found4U
+  p.lead No need to write your contact information on the things that can be lost or misplaced again.
+  hr
+  .row.center
+    if ( user)
+      h2 Get Tagging :) <br> Your Unique Tag is '#{user.uniqueid}'
+    else
+      h1 Keep Losing Items ? <br> Get Your Unique Tracking Tag Now
+      button.btn.btn.btn-success
+          i.fa.fa-pencilr
+          a.signup(href="/signup") SignUp Now
+      
